@@ -5,12 +5,15 @@ import (
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	"cuelang.org/go/cue/format"
+	"github.com/fluxcd/pkg/ssa"
 	"github.com/go-logr/zapr"
 	apiv1 "github.com/stefanprodan/timoni/api/v1alpha1"
 	"github.com/stefanprodan/timoni/internal/engine"
 	"github.com/stefanprodan/timoni/internal/engine/fetcher"
 	"github.com/stefanprodan/timoni/internal/reconciler"
+	"github.com/stefanprodan/timoni/internal/runtime"
 	"go.uber.org/zap"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"os"
 	"time"
 )
@@ -56,7 +59,7 @@ func (m *Manager) fetch() (*apiv1.ModuleReference, error) {
 	if err != nil {
 		return nil, err
 	}
-	f, err := fetcher.New(context.Background(), fetcher.Options{
+	f, err := fetcher.New(m.Ctx, fetcher.Options{
 		Source:       m.Source,
 		Version:      m.Version,
 		Destination:  tmpDir,
@@ -132,12 +135,37 @@ func (m *Manager) Apply() error {
 		},
 		5*time.Minute,
 	)
-	kubeconfigArgs, err := NewRESTClientGetter()
+	rcg, err := NewRESTClientGetter()
 	if err != nil {
 		return err
 	}
-	if err = r.Init(m.Ctx, m.Builder, buildResult, instance, kubeconfigArgs); err != nil {
+	if err = r.Init(m.Ctx, m.Builder, buildResult, instance, rcg); err != nil {
 		return err
 	}
 	return r.ApplyInstance(m.Ctx, log, m.Builder, buildResult)
+}
+
+func (m *Manager) Cleanup() error {
+	return os.RemoveAll(m.TempDir)
+}
+
+func (m *Manager) GetApplySets() ([]engine.ResourceSet, error) {
+	buildResult, err := m.Build()
+	if err != nil {
+		return nil, err
+	}
+	return m.Builder.GetApplySets(buildResult)
+}
+
+func (m *Manager) ApplyObject(resource *unstructured.Unstructured, force bool) (*ssa.ChangeSetEntry, error) {
+	zapLog, _ := zap.NewDevelopment()
+	log := zapr.NewLogger(zapLog)
+	rcg, err := NewRESTClientGetter()
+	resourceManager, err := runtime.NewResourceManager(rcg)
+	if err != nil {
+		return nil, err
+	}
+	log.Info("Applying object", "object", resource.GetName())
+	applyOpts := runtime.ApplyOptions(force, 5*time.Minute)
+	return resourceManager.Apply(m.Ctx, resource, applyOpts)
 }
