@@ -5,6 +5,7 @@ import (
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	"cuelang.org/go/cue/format"
+	"encoding/json"
 	"github.com/fluxcd/pkg/ssa"
 	"github.com/go-logr/zapr"
 	apiv1 "github.com/stefanprodan/timoni/api/v1alpha1"
@@ -155,6 +156,16 @@ func (m *Manager) GetApplySets() ([]engine.ResourceSet, error) {
 		return nil, err
 	}
 	return m.Builder.GetApplySets(buildResult)
+}
+
+func (m *Manager) MarshalApplySets(sets []engine.ResourceSet) ([]byte, error) {
+	return json.Marshal(sets)
+}
+
+func (m *Manager) UnmarshalApplySets(data []byte) ([]engine.ResourceSet, error) {
+	var sets []engine.ResourceSet
+	err := json.Unmarshal(data, &sets)
+	return sets, err
 }
 
 func (m *Manager) ApplyObject(resource *unstructured.Unstructured, force bool) (*ssa.ChangeSetEntry, error) {

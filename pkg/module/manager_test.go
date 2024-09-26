@@ -30,11 +30,6 @@ func Test_Main(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	applySets, err := manager.GetApplySets()
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Logf("ApplySets: %v", applySets)
 	err = manager.Apply()
 	if err != nil {
 		t.Fatal(err)
