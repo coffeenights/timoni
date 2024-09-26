@@ -34,9 +34,10 @@ type Manager struct {
 	TempDir     string
 	CacheDir    string
 	ModuleRoot  string
+	Insecure    bool
 }
 
-func NewManager(ctx context.Context, name string, source string, version string, namespace string, credentials string, values map[string]interface{}) (*Manager, error) {
+func NewManager(ctx context.Context, name string, source string, version string, namespace string, credentials string, insecure bool, values map[string]interface{}) (*Manager, error) {
 	rcg, err := NewRESTClientGetter()
 	if err != nil {
 		return nil, err
@@ -52,6 +53,7 @@ func NewManager(ctx context.Context, name string, source string, version string,
 		Values:      values,
 		Rcg:         rcg,
 		CacheDir:    "./.timoni/cache",
+		Insecure:    insecure,
 	}, nil
 }
 
@@ -66,7 +68,7 @@ func (m *Manager) fetch() (*apiv1.ModuleReference, error) {
 		Destination:  tmpDir,
 		CacheDir:     m.CacheDir,
 		Creds:        m.Credentials,
-		Insecure:     false,
+		Insecure:     m.Insecure,
 		DefaultLocal: false,
 	})
 	if err != nil {
