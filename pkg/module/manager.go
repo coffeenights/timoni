@@ -171,14 +171,11 @@ func (m *Manager) UnmarshalApplySets(data []byte) ([]engine.ResourceSet, error) 
 }
 
 func (m *Manager) ApplyObject(resource *unstructured.Unstructured, force bool) (*ssa.ChangeSetEntry, error) {
-	zapLog, _ := zap.NewDevelopment()
-	log := zapr.NewLogger(zapLog)
 	rcg, err := NewRESTClientGetter()
 	resourceManager, err := runtime.NewResourceManager(rcg)
 	if err != nil {
 		return nil, err
 	}
-	log.Info("Applying object", "object", resource.GetName())
 	applyOpts := runtime.ApplyOptions(force, 5*time.Minute)
 	return resourceManager.Apply(m.Ctx, resource, applyOpts)
 }
