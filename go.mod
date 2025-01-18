@@ -14,6 +14,7 @@ require (
 	github.com/fluxcd/pkg/tar v0.10.0
 	github.com/getkin/kin-openapi v0.128.0
 	github.com/go-logr/logr v1.4.2
+	github.com/go-logr/zapr v1.3.0
 	github.com/go-logr/zerologr v1.2.3
 	github.com/gonvenience/ytbx v1.4.4
 	github.com/google/go-cmp v0.6.0
