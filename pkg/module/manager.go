@@ -121,7 +121,7 @@ func (m *Manager) Apply() error {
 	if err != nil {
 		return err
 	}
-	instance := &engine.BundleInstance{
+	instance := &apiv1.BundleInstance{
 		Name:      m.Name,
 		Namespace: m.Namespace,
 		Module:    *m.Module,
