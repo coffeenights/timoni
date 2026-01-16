@@ -6,8 +6,8 @@ objects: [{
 		namespace: "test-namespace"
 	}
 	data: {
-		url:           "https://test.internal"
 		kubeVersion:   "1.25.3"
+		url:           "https://test.internal"
 		moduleVersion: "0.0.0-devel"
 	}
 }]
