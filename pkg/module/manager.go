@@ -2,10 +2,13 @@ package module
 
 import (
 	"context"
+	"encoding/json"
+	"os"
+	"time"
+
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	"cuelang.org/go/cue/format"
-	"encoding/json"
 	"github.com/fluxcd/pkg/ssa"
 	"github.com/go-logr/zapr"
 	apiv1 "github.com/stefanprodan/timoni/api/v1alpha1"
@@ -15,8 +18,6 @@ import (
 	"github.com/stefanprodan/timoni/internal/runtime"
 	"go.uber.org/zap"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"os"
-	"time"
 )
 
 type Manager struct {

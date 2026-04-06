@@ -21,7 +21,7 @@ func Test_Main(t *testing.T) {
 			},
 		},
 	}
-	manager, err := NewManager(ctx, "podinfo", "oci://ghcr.io/stefanprodan/modules/podinfo", "latest", "test", "", vals)
+	manager, err := NewManager(ctx, "podinfo", "oci://ghcr.io/stefanprodan/modules/podinfo", "latest", "test", "", true, vals)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,7 +52,7 @@ func TestManager_ApplyObject(t *testing.T) {
 			},
 		},
 	}
-	manager, err := NewManager(ctx, "podinfo", "oci://ghcr.io/stefanprodan/modules/podinfo", "latest", "test", "", vals)
+	manager, err := NewManager(ctx, "podinfo", "oci://ghcr.io/stefanprodan/modules/podinfo", "latest", "test", "", true, vals)
 	if err != nil {
 		t.Fatal(err)
 	}
