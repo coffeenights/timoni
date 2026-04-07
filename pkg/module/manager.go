@@ -161,6 +161,13 @@ func (m *Manager) GetApplySets() ([]engine.ResourceSet, error) {
 	return m.Builder.GetApplySets(buildResult)
 }
 
+func (m *Manager) GetDigest() string {
+	if m.Module != nil {
+		return m.Module.Digest
+	}
+	return ""
+}
+
 func (m *Manager) MarshalApplySets(sets []engine.ResourceSet) ([]byte, error) {
 	return json.Marshal(sets)
 }
